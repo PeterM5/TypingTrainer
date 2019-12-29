@@ -1,8 +1,10 @@
 # Notepad
 
-## Log
+# Log
 
-  **21:26**: Ok, so the idea of the program is that you start up a terminal and type ttrainer n. You are then presented with a sentance of n random words and you are to type each word in a entry box below. If you type a letter in a word incorrectly, the color of the letter in the word is turned red and the word in highlighted. At this point the program is frozen and you have to Crl-C to restart the program. If you succeed, you are presented with your *words per minute* and *letters per minute* scoring. You can then type your name and it will be added to a leaderboard.
+**21:26**: Ok, so the idea of the program is that you start up a terminal and type ttrainer n. You are then presented with a sentance of n random words and you are to type each word in a entry box below. If you type a letter in a word incorrectly, the color of the letter in the word is turned red and the word in highlighted. At this point the program is frozen and you have to Crl-C to restart the program. If you succeed, you are presented with your *words per minute* and *letters per minute* scoring. You can then type your name and it will be added to a leaderboard.
+**23:04**: So I found a library that is used to print to the terminals buffer. I havent looked into it much as I spent all this time talking to Matt and installing various package managers like *brew* and *buckaroo*. I still need to install *buck*. 
+
 
 ## To do!
 
