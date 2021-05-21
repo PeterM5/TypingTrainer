@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "clang++ build main",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-lncurses",
+                "-std=c++11",
+                "-stdlib=libc++",
+                "-g",
+                "${file}", // main file
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}", // executable
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

@@ -1,4 +1,7 @@
-LIBS = "-lncurses"
+LIBS = -lncurses
+CC = clang++
+FLAGS = -std=c++11
+SRC = src/
 
-main: main.cpp
-	$(CC) $(LIBS) main.cpp -o TypingTrainer
+main: $(SRC)TypingTrainer.cpp
+	$(CC) $(SRC)TypingTrainer.cpp -o TypingTrainer $(LIBS) $(FLAGS)
