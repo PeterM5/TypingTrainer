@@ -40,11 +40,13 @@ void Words::loadWords(string &filename, int max_size, bool append)
             stringstream ss(line);
             while (getline(ss, word, ' ')) {
                 m_words.push_back(word);
-                cout << word << endl;
                 count++;
             }
         }
         file.close();
+    }
+    else {
+        throw EOpenFile();
     }
 }
 

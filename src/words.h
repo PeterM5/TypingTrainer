@@ -9,7 +9,19 @@
 
 using namespace std;
 
+
+
 class Words {
+public:
+    // Exception called when failing to open file.
+    struct EOpenFile: public exception
+    {
+        const char * what () const throw ()
+        {
+            return "Error while opening file.";
+        }
+    };
+
 private: // Private Constants
     const static int MAX_SIZE{16777215}; //2^24 - 1
 
