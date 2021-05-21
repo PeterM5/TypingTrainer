@@ -5,7 +5,7 @@
             "name": "clang++ - Build and debug main",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "program": "${workspaceRoot}/TypingTrainer",
             "preLaunchTask": "clang++ build main",
             "args": [],
             "stopAtEntry": true,

@@ -39,6 +39,8 @@ public:
     void loadWords(string &filename, int max_size=MAX_SIZE, bool append=true);
     // Add function to remove all duplicates from words
 
+    vector<string> getWords() const;
+
 };
 
 #endif

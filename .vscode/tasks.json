@@ -10,9 +10,9 @@
                 "-std=c++11",
                 "-stdlib=libc++",
                 "-g",
-                "${file}", // main file
+                "${workspaceRoot}/main.cpp", // main file
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}", // executable
+                "${workspaceRoot}/TypingTrainer", // executable
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
