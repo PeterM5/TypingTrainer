@@ -1,5 +1,6 @@
 #include "words.cpp"
 #include "ncWrapper.cpp"
+#include "trainer.cpp"
 
 int main(int argc, char ** argv)
 {
@@ -11,8 +12,10 @@ int main(int argc, char ** argv)
 
     NCWrapper ncw; // Initialize curses using wrapper
     if (ncw.getRows() < 4) throw "Console too small to run Typing Trainer. Console must have at least 4 rows.";
+
+    OrderedTrainer trainer(words.getWords());
+    ncw.displayWords(trainer.getWords());
     string word = ncw.getWord(ncw.getRows()/2 + 1, ncw.getCols()/2);
-    mvprintw(ncw.getRows()/2, ncw.getCols()/2, word.c_str());
     getch();
 
 

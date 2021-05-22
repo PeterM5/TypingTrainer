@@ -10,7 +10,7 @@
                 "-std=c++11",
                 "-stdlib=libc++",
                 "-g",
-                "${workspaceRoot}/main.cpp", // main file
+                "${workspaceRoot}/src/main.cpp", // main file
                 "-o",
                 "${workspaceRoot}/TypingTrainer", // executable
             ],

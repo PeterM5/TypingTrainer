@@ -1,6 +1,6 @@
 LIBS = -lncurses
 CC = clang++
-FLAGS = -std=c++11
+FLAGS = -std=c++11 -g
 SRC = src/
 
 main: $(SRC)main.cpp

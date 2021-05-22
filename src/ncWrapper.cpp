@@ -22,16 +22,14 @@ NCWrapper::~NCWrapper() {
 int NCWrapper::getChr() const {
     int ch = getch();
     if (ch >= 33 && ch <= 126) return ch;
-    else {
-        // Check for special characters
-        if (
-            ch == ' ' ||
-            ch == '\n'||
-            ch == 127 || /* backspace*/
-            ch == 27 /* escape */
-            ) return ch;
-        else return 0;
-    }
+    // Check for special characters
+    if (
+        ch == ' ' ||
+        ch == '\n'||
+        ch == 127 || /* backspace*/
+        ch == 27 /* escape */
+        ) return ch;
+    return 0; // Ignore all other characters
 }
 
 // Obtain a word from the user
@@ -57,6 +55,14 @@ string NCWrapper::getWord(int row, int col) {
         }
     }
     return word;
+}
+
+void NCWrapper::displayWords(vector<string> words) {
+    int shift = 0;
+    for (auto word: words) {
+        mvaddstr(m_rows/2, 0 + shift, word.c_str());
+        shift += word.size();
+    }
 }
 
 int NCWrapper::getRows() const {

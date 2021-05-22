@@ -17,6 +17,7 @@ public:
     ~NCWrapper();
     int getChr() const;
     string getWord(int row, int col);
+    void displayWords(vector<string> words);
 
     int getRows() const;
     int getCols() const;
