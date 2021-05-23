@@ -45,52 +45,28 @@ int TT::getChr() const {
     return 0; // Ignore all other characters
 }
 
-// Obtain a word from the user
-string TT::getWord(int row, int col) {
-    move(row, col);
-    string word;
-    int ch = getChr();
-    int count = 0;
-    while (ch && ch != ' ' && ch != '\n') {
-        if (ch == 127) { // backspace
-            if (count > 0) {
-                word.pop_back();
-                count--;
-                mvaddch(row, col + count, ' '); // Remove character from screen
-                move(row, col + count);
-            }
-            ch = getChr();
-        } else {
-            word.push_back(ch);
-            addch(ch); // addch() advances cursor for us
-            count++;
-            ch = getChr();
-        }
-    }
-    return word;
-}
 
 void TT::typeMode(string words) {
     m_words = words;
-    displayWords();
-    move(m_rows/2, 0);
+    int start_row = m_rows/2 + words.size()/(m_cols*2);
+    displayWords(start_row);
+    move(start_row, 0);
     int ch = getChr();
-    int shift = 0;
     while (ch != 27) { // 27: Escape character
         if (ch == m_words[m_index]) {
             m_index++;
-            move(m_rows/2, m_index);
+            move(start_row + m_index/m_cols, m_index%m_cols);
         }
         else {
             if (m_words[m_index] == ' ') {
                 attron(COLOR_PAIR(RED_B));
-                mvaddch(m_rows/2,m_index,m_words[m_index]);
-                move(m_rows/2, m_index);
+                mvaddch(start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
+                move(start_row + m_index/m_cols, m_index%m_cols);
                 attroff(COLOR_PAIR(RED_B));
             } else {
                 attron(COLOR_PAIR(RED));
-                mvaddch(m_rows/2,m_index,m_words[m_index]);
-                move(m_rows/2, m_index);
+                mvaddch(start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
+                move(start_row + m_index/m_cols, m_index%m_cols);
                 attroff(COLOR_PAIR(RED));
             }
         }
@@ -98,8 +74,8 @@ void TT::typeMode(string words) {
     }
 }
 
-void TT::displayWords() {
-    mvaddstr(m_rows/2, 0, m_words.c_str());
+void TT::displayWords(int start_row) {
+    mvaddstr(start_row, 0, m_words.c_str());
     //mvprintw(m_rows/2, 0, words.c_str());
 }
 

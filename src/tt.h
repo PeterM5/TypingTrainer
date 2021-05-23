@@ -26,7 +26,7 @@ public:
     int getChr() const;
     void typeMode(string words);
     string getWord(int row, int col);
-    void displayWords();
+    void displayWords(int start_row);
 
     int getRows() const;
     int getCols() const;

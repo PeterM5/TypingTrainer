@@ -10,7 +10,7 @@ using namespace std;
 
 class Trainer {
 public: // Public constants
-    static const int MAX_SET_SIZE{10};
+    static const int MAX_SET_SIZE{30};
     const char IGNORED_CHARS[2] {'\n', '\r'};
     
 protected:
