@@ -46,7 +46,7 @@ int TT::getChr() const {
 }
 
 
-void TT::typeMode(OrderedTrainer &trainer) {
+void TT::typeMode(Trainer &trainer) {
     m_words = trainer.getWords();
     int start_row = m_rows/2 + m_words.size()/(m_cols*2);
     displayWords(start_row);

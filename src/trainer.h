@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -22,9 +23,12 @@ protected:
 public:
     Trainer();
     virtual ~Trainer();
+    virtual string selectWords()=0;
     virtual string selectWords(vector<string> &words)=0;
     virtual string getWords()=0;
     virtual bool ended()=0;
+    const string cleanString(string str);
+
 };
 
 class OrderedTrainer: public Trainer {
@@ -36,8 +40,22 @@ public:
     string selectWords();
     string selectWords(vector<string> &words);
     string getWords();
-    const string cleanString(string str);
     bool ended();
 
 };
+
+class RandomTrainer: public Trainer {
+private:
+    int m_total_index{0};
+    vector<int> shuffled_index;
+
+public:
+    RandomTrainer(vector<string> &words);
+    string selectWords();
+    string selectWords(vector<string> &words);
+    string getWords();
+    bool ended();
+
+};
+
 #endif

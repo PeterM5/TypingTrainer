@@ -14,7 +14,7 @@ int main(int argc, char ** argv)
     TT tt; // Initialize curses using wrapper
     if (tt.getRows() < 4) throw "Console too small to run Typing Trainer. Console must have at least 4 rows.";
 
-    OrderedTrainer trainer(words.m_words);
+    RandomTrainer trainer(words.m_words);
     tt.typeMode(trainer);
 
   } catch (Words::EOpenFile err) {

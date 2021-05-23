@@ -25,7 +25,7 @@ public:
     TT();
     ~TT();
     int getChr() const;
-    void typeMode(OrderedTrainer &trainer);
+    void typeMode(Trainer &trainer);
     string getWord(int row, int col);
     void displayWords(int start_row);
 
