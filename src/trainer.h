@@ -4,23 +4,24 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <algorithm>
 
 using namespace std;
 
 class Trainer {
-public:
-    static int const MAX_SET_SIZE{10};
+public: // Public constants
+    static const int MAX_SET_SIZE{10};
+    const char IGNORED_CHARS[2] {'\n', '\r'};
     
 protected:
-    vector<string> m_words;
-    u_int8_t m_index{0};
+    string m_words;
     u_int8_t m_set_size{MAX_SET_SIZE};
     
 public:
     Trainer();
     virtual ~Trainer();
-    virtual void selectWords(vector<string> words)=0;
-    virtual vector<string> getWords()=0;
+    virtual string selectWords(vector<string> words)=0;
+    virtual string getWords()=0;
 };
 
 class OrderedTrainer: public Trainer {
@@ -29,7 +30,9 @@ private:
 
 public:
     OrderedTrainer(vector<string> words);
-    void selectWords(vector<string> words);
-    vector<string> getWords();
+    string selectWords(vector<string> words);
+    string getWords();
+    const string cleanString(string str);
+
 };
 #endif

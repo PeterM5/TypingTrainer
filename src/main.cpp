@@ -1,7 +1,8 @@
 #include "words.cpp"
-#include "ncWrapper.cpp"
+#include "tt.cpp"
 #include "trainer.cpp"
-
+#include <iostream>
+using namespace std;
 int main(int argc, char ** argv)
 {
 
@@ -10,15 +11,11 @@ int main(int argc, char ** argv)
     string filename = "words.csv";
     Words words(filename, 10);
 
-    NCWrapper ncw; // Initialize curses using wrapper
-    if (ncw.getRows() < 4) throw "Console too small to run Typing Trainer. Console must have at least 4 rows.";
+    TT tt; // Initialize curses using wrapper
+    if (tt.getRows() < 4) throw "Console too small to run Typing Trainer. Console must have at least 4 rows.";
 
     OrderedTrainer trainer(words.getWords());
-    ncw.displayWords(trainer.getWords());
-    string word = ncw.getWord(ncw.getRows()/2 + 1, ncw.getCols()/2);
-    getch();
-
-
+    tt.typeMode(trainer.getWords());
 
   } catch (Words::EOpenFile err) {
     cout << "Open File Error: " << err.what() << endl;
@@ -28,5 +25,3 @@ int main(int argc, char ** argv)
 
   return 0;
 }
-
-

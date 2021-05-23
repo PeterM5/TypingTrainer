@@ -1,5 +1,5 @@
 LIBS = -lncurses
-CC = clang++
+CC = g++
 FLAGS = -std=c++11 -g
 SRC = src/
 
