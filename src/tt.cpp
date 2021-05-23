@@ -46,29 +46,42 @@ int TT::getChr() const {
 }
 
 
-void TT::typeMode(string words) {
-    m_words = words;
-    int start_row = m_rows/2 + words.size()/(m_cols*2);
+void TT::typeMode(OrderedTrainer &trainer) {
+    m_words = trainer.getWords();
+    int start_row = m_rows/2 + m_words.size()/(m_cols*2);
     displayWords(start_row);
     move(start_row, 0);
     int ch = getChr();
-    while (ch != 27) { // 27: Escape character
-        if (ch == m_words[m_index]) {
+    int color = RED;
+    bool end = false;
+
+    while (ch != 27 && !end) { // 27: Escape character
+        if (ch == m_words[m_index]) { // User types correct character
+            // Continue
             m_index++;
             move(start_row + m_index/m_cols, m_index%m_cols);
         }
-        else {
-            if (m_words[m_index] == ' ') {
-                attron(COLOR_PAIR(RED_B));
-                mvaddch(start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
-                move(start_row + m_index/m_cols, m_index%m_cols);
-                attroff(COLOR_PAIR(RED_B));
-            } else {
-                attron(COLOR_PAIR(RED));
-                mvaddch(start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
-                move(start_row + m_index/m_cols, m_index%m_cols);
-                attroff(COLOR_PAIR(RED));
+        else { // If user does not type correct character
+            // We dont continue until user types correct character
+            if (m_words[m_index] == ' ') { // Color space red (set background red)
+                color = RED_B;
+            } else { // Color character red
+                color = RED;
             }
+            attron(COLOR_PAIR(color));
+            mvaddch(start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
+            move(start_row + m_index/m_cols, m_index%m_cols);
+            attroff(COLOR_PAIR(color));
+        }
+        if (m_index == m_words.size()) { // Reached the end, generate new words 
+            if (!trainer.ended()) {
+                m_words = trainer.selectWords();
+                clear(); // clear screen
+                m_index = 0;
+                int start_row = m_rows/2 + m_words.size()/(m_cols*2);
+                displayWords(start_row);
+                move(start_row, 0);
+            } else end = true;
         }
         ch = getChr();
     }

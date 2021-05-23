@@ -4,23 +4,39 @@ Trainer::Trainer() {}
 
 Trainer::~Trainer() {}
 
-OrderedTrainer::OrderedTrainer(vector<string> words) {
-    selectWords(words);
+OrderedTrainer::OrderedTrainer(vector<string> &words) {
+    m_lexicon = words;
+    selectWords();
 }
 
-string OrderedTrainer::selectWords(vector<string> words) 
+string OrderedTrainer::selectWords() {
+    return selectWords(m_lexicon);
+}
+
+
+string OrderedTrainer::selectWords(vector<string> &words) 
 {
-    // Check if slice indexes outside vector
-    vector<string>::iterator end;
-    if (m_total_index + MAX_SET_SIZE > words.size()) {
-        end = words.end();
-        m_set_size = m_total_index + MAX_SET_SIZE - words.size();
-    } else {
-        end = words.begin() + m_total_index + MAX_SET_SIZE;
+    // If m_words is not empty, make empty
+    if (m_words.size() > 0){
+        m_words.erase();
     }
-    for (auto it = words.begin() + m_total_index; it != end; it++) {
-        m_words.append(cleanString(*it));
-        m_words.append(" ");
+
+    // Check if we have reached the end
+    if (!m_end) {
+        // Check if slice indexes outside vector
+        vector<string>::iterator end;
+        if (m_total_index + MAX_SET_SIZE > words.size()) {
+            end = words.end();
+            m_set_size = m_total_index + MAX_SET_SIZE - words.size();
+            m_end = true; // We have reached the end, there are no more words.
+        } else {
+            end = words.begin() + m_total_index + MAX_SET_SIZE;
+        }
+        for (auto it = words.begin() + m_total_index; it != end; it++) {
+            m_words.append(cleanString(*it));
+            m_words.append(" ");
+        }
+        m_total_index += MAX_SET_SIZE;
     }
     return m_words;
 }
@@ -34,4 +50,8 @@ const string OrderedTrainer::cleanString(string str) {
 
 string OrderedTrainer::getWords() {
     return m_words;
+}
+
+bool OrderedTrainer::ended() {
+    return m_end;
 }

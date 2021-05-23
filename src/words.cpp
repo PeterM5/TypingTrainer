@@ -65,7 +65,3 @@ int Words::size() const
 {
     return m_words.size();
 }
-
-vector<string> Words::getWords() const {
-    return m_words;
-}

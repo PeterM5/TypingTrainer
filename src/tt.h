@@ -1,6 +1,7 @@
 #ifndef TYPINGTRAINER_H
 #define TYPINGTRAINER_H
 
+#include "trainer.h"
 #include <ncurses.h>
 #include <string>
 
@@ -24,7 +25,7 @@ public:
     TT();
     ~TT();
     int getChr() const;
-    void typeMode(string words);
+    void typeMode(OrderedTrainer &trainer);
     string getWord(int row, int col);
     void displayWords(int start_row);
 
