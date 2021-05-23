@@ -9,7 +9,7 @@ int main(int argc, char ** argv)
   // Load words into memory
   try {
     string filename = "words.csv";
-    Words words(filename, 15);
+    Words words(filename);
 
     TT tt; // Initialize curses using wrapper
     if (tt.getRows() < 4) throw "Console too small to run Typing Trainer. Console must have at least 4 rows.";
