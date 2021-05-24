@@ -1,6 +1,6 @@
 #include "trainer.h"
 
-Trainer::Trainer() {}
+Trainer::Trainer(): m_score{0,0} {}
 
 Trainer::~Trainer() {}
 
@@ -9,6 +9,22 @@ const string Trainer::cleanString(string str) {
         str.erase(remove(str.begin(), str.end(), IGNORED_CHARS[i]), str.end());
     }
     return str;
+}
+
+const Score Trainer::getScore() const {
+    return m_score;
+}
+
+void Trainer::setScore(Score score) {
+    m_score = score;
+}
+
+void Trainer::incWordsScore() {
+    m_score.total_words++;
+}
+
+void Trainer::incMistakesScore() {
+    m_score.mistakes++;
 }
 
 OrderedTrainer::OrderedTrainer(vector<string> &words) {
