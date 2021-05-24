@@ -97,6 +97,7 @@ bool OrderedTrainer::ended() {
 RandomTrainer::RandomTrainer(vector<string> &words) {
     shuffled_index.resize(words.size());
     iota(shuffled_index.begin(), shuffled_index.end(), 0);
+    srand(time(NULL)); // Set seed to current processor time.
     random_shuffle(shuffled_index.begin(), shuffled_index.end());
     m_lexicon = words;
     selectWords();
