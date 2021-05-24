@@ -1,6 +1,6 @@
 #include "trainer.h"
 
-Trainer::Trainer(): m_score{0,0} {}
+Trainer::Trainer(): m_score{0,0,"0.0"} {}
 
 Trainer::~Trainer() {}
 
@@ -25,6 +25,28 @@ void Trainer::incWordsScore() {
 
 void Trainer::incMistakesScore() {
     m_score.mistakes++;
+}
+
+void Trainer::setTimerOn() {
+    m_timer_on = true;
+}
+
+void Trainer::setTimerOff() {
+    m_timer_on = false;
+}
+
+bool Trainer::getTimerState() {
+    return m_timer_on;
+}
+// Calculate Words Per Minute
+void Trainer::calcWPM(chrono::steady_clock::time_point start, 
+                        chrono::steady_clock::time_point end) 
+{
+    // 1000ms = 1s
+    int64_t elapsed_ms = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    double elapsed_s = elapsed_ms / 1000.0;
+    double elapsed_m = elapsed_s / 60.0;
+    m_score.wpm = to_string(int(m_set_size/elapsed_m));
 }
 
 OrderedTrainer::OrderedTrainer(vector<string> &words) {

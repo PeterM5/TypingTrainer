@@ -6,17 +6,20 @@
 #include <cstdint>
 #include <algorithm>
 #include <numeric>
+#include <chrono>
+#include <sstream>
 
 using namespace std;
 
 struct Score {
     int total_words;
     int mistakes;
+    string wpm; // Words Per Minute
 };
 
 class Trainer {
 public: // Public constants
-    static const int MAX_SET_SIZE{20};
+    static const int MAX_SET_SIZE{5};
     const char IGNORED_CHARS[2] {'\n', '\r'};
     
 protected:
@@ -25,6 +28,7 @@ protected:
     u_int8_t m_set_size {MAX_SET_SIZE}; // Actual number of selected words
     bool m_end {false}; // true if there are no more words
     Score m_score;
+    bool m_timer_on{false};
     
     
 public:
@@ -40,7 +44,11 @@ public:
     void setScore(Score score);
     void incWordsScore();
     void incMistakesScore();
-
+    void setTimerOn();
+    void setTimerOff();
+    bool getTimerState();
+    void calcWPM(chrono::steady_clock::time_point start, 
+                   chrono::steady_clock::time_point end);
 };
 
 class OrderedTrainer: public Trainer {

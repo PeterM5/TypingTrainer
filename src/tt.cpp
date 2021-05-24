@@ -18,7 +18,10 @@ TT::TT() {
     init_pair(WHITE, COLOR_WHITE, -1);
     init_pair(RED, COLOR_RED, -1);
     init_pair(RED_B, COLOR_RED, COLOR_RED);
+    init_pair(RED_BG, -1, COLOR_RED);
     init_pair(GREEN, COLOR_GREEN, -1);
+    init_pair(GREEN_BG, -1, COLOR_GREEN);
+
 
     raw(); // Ctrl-Z and Ctrl-C are passed directly to program without generating signal.
     noecho(); // We want control over what to display to screen when user is typing.
@@ -34,6 +37,7 @@ TT::TT() {
 
 }
 
+
 TT::~TT() {
     delwin(m_bot_win);
     delwin(m_top_win);
@@ -41,6 +45,7 @@ TT::~TT() {
     endwin(); 
     // deallocates memory and ends ncurses
 }
+
 
 // Obtain a readable character from the user.
 int TT::getChr() const {
@@ -64,10 +69,13 @@ void TT::typeMode(Trainer &trainer) {
     displayWords(start_row);
     wmove(m_main_win, start_row, 0);
     int ch = getChr();
+    trainer.setTimerOn();
+    displayBotBar(trainer);
+    chrono::steady_clock::time_point time = chrono::steady_clock::now();
     int color = RED;
-    bool end = false;
+    bool restart = false; // when we reach the end of a set of words, restart is set to true
 
-    while (ch != 27 && !end) { // 27: Escape character
+    while (ch != 27 && !trainer.ended()) { // 27: Escape character
         if (ch == m_words[m_index]) { // User types correct character
             if (ch == ' ') {
                 trainer.incWordsScore();
@@ -93,6 +101,9 @@ void TT::typeMode(Trainer &trainer) {
             wattroff(m_main_win, COLOR_PAIR(color));
         }
         if (m_index == m_words.size()) { // Reached the end, generate new set of words 
+            trainer.setTimerOff();
+            trainer.calcWPM(time, chrono::steady_clock::now());
+            displayBotBar(trainer);
             if (!trainer.ended()) {
                 m_words = trainer.selectWords();
                 clear(); // clear screen
@@ -100,11 +111,19 @@ void TT::typeMode(Trainer &trainer) {
                 int start_row = (m_rows-2)/2 - m_words.size()/(m_cols*2); // m_rows - 2 becuase we loose two rows to top and bottom bars
                 displayWords(start_row);
                 wmove(m_main_win, start_row, 0);
-            } else end = true;
+                restart = true;
+            }
         }
         ch = getChr();
+        trainer.setTimerOn();
+        displayBotBar(trainer);
+        if (restart) {
+            time = chrono::steady_clock::now();
+            restart = false; // We have started a new set of words, set back to false.
+        }
     }
 }
+
 
 void TT::displayWords(int start_row) {
     mvwaddstr(m_main_win, start_row, 0, m_words.c_str());
@@ -112,35 +131,57 @@ void TT::displayWords(int start_row) {
     //mvprintw(m_rows/2, 0, words.c_str());
 }
 
+
 void TT::displayTopBar() {
     string title = "Typing Trainer";
     mvwaddstr(m_top_win, 0, (m_cols - title.size())/2, title.c_str());
     wrefresh(m_top_win);
 }
 
+
 void TT::displayBotBar(Trainer &trainer) {
     wclear(m_bot_win);
+
+    // Dispaly if timer is active
+    string timer_text = "Timer: ";
+    mvwaddstr(m_bot_win, 0, 1, timer_text.c_str());
+    if (trainer.getTimerState()) {
+        wattron(m_bot_win, COLOR_PAIR(GREEN_BG));
+            mvwaddstr(m_bot_win, 0, 1+timer_text.size(), "ON");
+        wattroff(m_bot_win, COLOR_PAIR(GREEN_BG));
+    } else {
+        wattron(m_bot_win, COLOR_PAIR(RED_BG));
+            mvwaddstr(m_bot_win, 0, 1+timer_text.size(), "OFF");
+        wattroff(m_bot_win, COLOR_PAIR(RED_BG));
+    }
+
+    // Draw Words Per Minute
+    string wpm = "WPM: ";
+    wpm.append(trainer.getScore().wpm);
+    mvwaddstr(m_bot_win, 0, 2*(m_cols - wpm.size())/6, wpm.c_str());
 
     // Draw total words count
     wattron(m_bot_win, COLOR_PAIR(GREEN));
         string total = "Words typed: ";
         total.append(to_string(trainer.getScore().total_words));
-        mvwaddstr(m_bot_win, 0, (m_cols - total.size())/4, total.c_str());
+        mvwaddstr(m_bot_win, 0, 4*(m_cols - total.size())/6, total.c_str());
     wattroff(m_bot_win, COLOR_PAIR(GREEN));
 
     // Draw mistake count
     wattron(m_bot_win, COLOR_PAIR(RED));
         string mistakes = "mistakes: ";
         mistakes.append(to_string(trainer.getScore().mistakes));
-        mvwaddstr(m_bot_win, 0, 3 * (m_cols - total.size())/4, mistakes.c_str());
+        mvwaddstr(m_bot_win, 0, 6 * (m_cols - total.size())/6, mistakes.c_str());
     wattroff(m_bot_win, COLOR_PAIR(RED));
 
     wrefresh(m_bot_win);
 }
 
+
 int TT::getRows() const {
     return m_rows;
 }
+
 
 int TT::getCols() const {
     return m_cols;
