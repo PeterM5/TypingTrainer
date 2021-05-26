@@ -60,66 +60,85 @@ int TT::getChr() const {
     return 0; // Ignore all other characters
 }
 
-
-void TT::typeMode(Trainer &trainer) {
-    displayTopBar();
-    displayBotBar(trainer);
-    m_words = trainer.getWords();
-    int start_row = (m_rows-2)/2 - m_words.size()/(m_cols*2); // m_rows - 2 becuase we loose two rows to top and bottom bars
-    displayWords(start_row);
-    wmove(m_main_win, start_row, 0);
+int TT::startTimer(Trainer &trainer) {
     int ch = getChr();
     trainer.setTimerOn();
     displayBotBar(trainer);
+    return ch;
+}
+
+// Increment position
+void TT::incPosition(int ch, Trainer & trainer, int start_row) {
+    if (ch == ' ') {
+        trainer.incWordsScore();
+        displayBotBar(trainer);
+    }
+    // Continue
+    m_index++;
+    wmove(m_main_win, start_row + m_index/m_cols, m_index%m_cols);
+}
+
+void TT::markChrRed(Trainer &trainer, int color, int start_row) {
+    trainer.incMistakesScore();
+    displayBotBar(trainer);
+    // We dont continue until user types correct character
+    if (m_words[m_index] == ' ') { // Color space red (set background red)
+        color = RED_B;
+    } else { // Color character red
+        color = RED;
+    }
+    wattron(m_main_win, COLOR_PAIR(color));
+    mvwaddch(m_main_win, start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
+    wmove(m_main_win, start_row + m_index/m_cols, m_index%m_cols);
+    wrefresh(m_main_win);
+    wattroff(m_main_win, COLOR_PAIR(color));
+
+}
+
+// Generate and display a new set of words. Also stop timer. 
+void TT::regenWords(Trainer &trainer, chrono::steady_clock::time_point &time, int &start_row, bool &restart_timer) {
+    trainer.setTimerOff();
+    trainer.calcWPM(time, chrono::steady_clock::now());
+    displayBotBar(trainer);
+    if (!trainer.ended()) {
+        m_words = trainer.selectWords();
+        clear(); // clear screen
+        m_index = 0;
+        start_row = (m_rows-2)/2 - m_words.size()/(m_cols*2); // m_rows - 2 becuase we loose two rows to top and bottom bars
+        displayWords(start_row);
+        wmove(m_main_win, start_row, 0);
+        restart_timer = true;
+    }
+}
+
+void TT::typeMode(Trainer &trainer) {
+    int color; // Initalize color
+    m_words = trainer.getWords();
+    int start_row = (m_rows-2)/2 - m_words.size()/(m_cols*2); // m_rows - 2 becuase we loose two rows to top and bottom bars
+    displayTopBar();
+    displayBotBar(trainer);
+    displayWords(start_row);
+    wmove(m_main_win, start_row, 0);
+
+    int ch = startTimer(trainer);
     chrono::steady_clock::time_point time = chrono::steady_clock::now();
-    int color = RED;
-    bool restart = false; // when we reach the end of a set of words, restart is set to true
+    bool restart_timer = false; // when we reach the end of a set of words, restart_timer is set to true
 
     while (ch != 27 && !trainer.ended()) { // 27: Escape character
         if (ch == m_words[m_index]) { // User types correct character
-            if (ch == ' ') {
-                trainer.incWordsScore();
-                displayBotBar(trainer);
-            }
-            // Continue
-            m_index++;
-            wmove(m_main_win, start_row + m_index/m_cols, m_index%m_cols);
+            incPosition(ch, trainer, start_row);
         }
         else { // If user does not type correct character
-            trainer.incMistakesScore();
-            displayBotBar(trainer);
-            // We dont continue until user types correct character
-            if (m_words[m_index] == ' ') { // Color space red (set background red)
-                color = RED_B;
-            } else { // Color character red
-                color = RED;
-            }
-            wattron(m_main_win, COLOR_PAIR(color));
-            mvwaddch(m_main_win, start_row + m_index/m_cols,m_index%m_cols,m_words[m_index]);
-            wmove(m_main_win, start_row + m_index/m_cols, m_index%m_cols);
-            wrefresh(m_main_win);
-            wattroff(m_main_win, COLOR_PAIR(color));
+            markChrRed(trainer, color, start_row);
         }
+
         if (m_index == m_words.size()) { // Reached the end, generate new set of words 
-            trainer.setTimerOff();
-            trainer.calcWPM(time, chrono::steady_clock::now());
-            displayBotBar(trainer);
-            if (!trainer.ended()) {
-                m_words = trainer.selectWords();
-                clear(); // clear screen
-                m_index = 0;
-                int start_row = (m_rows-2)/2 - m_words.size()/(m_cols*2); // m_rows - 2 becuase we loose two rows to top and bottom bars
-                displayWords(start_row);
-                wmove(m_main_win, start_row, 0);
-                restart = true;
-            }
+            regenWords(trainer, time, start_row, restart_timer);
         }
-        ch = getChr();
-        trainer.setTimerOn();
-        displayBotBar(trainer);
-        if (restart) {
+        ch = startTimer(trainer);
+        if (restart_timer) {
             time = chrono::steady_clock::now();
-            restart = false; // We have started a new set of words, set back to false.
+            restart_timer = false; // We have started a new set of words, set back to false.
         }
     }
 }

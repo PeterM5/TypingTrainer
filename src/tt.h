@@ -33,7 +33,10 @@ private:
     void displayWords(int start_row);
     void displayTopBar();
     void displayBotBar(Trainer &trainer);
-
+    int startTimer(Trainer &trainer);
+    void incPosition(int ch, Trainer & trainer, int start_row);
+    void markChrRed(Trainer &trainer, int color, int start_row);
+    void regenWords(Trainer &trainer, chrono::steady_clock::time_point &time, int &start_row, bool &restart_timer);
 public:
     TT();
     ~TT();
