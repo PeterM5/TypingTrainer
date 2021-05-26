@@ -60,10 +60,12 @@ int TT::getChr() const {
     return 0; // Ignore all other characters
 }
 
-int TT::startTimer(Trainer &trainer) {
+int TT::getInput(Trainer &trainer) {
     int ch = getChr();
-    trainer.setTimerOn();
-    displayBotBar(trainer);
+    if (!trainer.getTimerState()) {
+        trainer.setTimerOn();
+        displayBotBar(trainer);
+    }
     return ch;
 }
 
@@ -120,7 +122,7 @@ void TT::typeMode(Trainer &trainer) {
     displayWords(start_row);
     wmove(m_main_win, start_row, 0);
 
-    int ch = startTimer(trainer);
+    int ch = getInput(trainer); // Also displays timer as ON
     chrono::steady_clock::time_point time = chrono::steady_clock::now();
     bool restart_timer = false; // when we reach the end of a set of words, restart_timer is set to true
 
@@ -135,7 +137,7 @@ void TT::typeMode(Trainer &trainer) {
         if (m_index == m_words.size()) { // Reached the end, generate new set of words 
             regenWords(trainer, time, start_row, restart_timer);
         }
-        ch = startTimer(trainer);
+        ch = getInput(trainer);
         if (restart_timer) {
             time = chrono::steady_clock::now();
             restart_timer = false; // We have started a new set of words, set back to false.
