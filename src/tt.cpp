@@ -147,6 +147,7 @@ void TT::typeMode(Trainer &trainer) {
 
 
 void TT::displayWords(int start_row) {
+    wclear(m_main_win);
     mvwaddstr(m_main_win, start_row, 0, m_words.c_str());
     wrefresh(m_main_win);
     //mvprintw(m_rows/2, 0, words.c_str());
