@@ -8,6 +8,7 @@
 #include <numeric>
 #include <chrono>
 #include <sstream>
+#include <map>
 
 using namespace std;
 
@@ -65,9 +66,10 @@ public:
 };
 
 class RandomTrainer: public Trainer {
-private:
+protected:
     int m_total_index{0};
     vector<int> shuffled_index;
+    map<int, int> char_stats; // Key: Character, Value: Number of mistakes
 
 public:
     RandomTrainer(vector<string> &words);
@@ -77,5 +79,20 @@ public:
     bool ended();
 
 };
+
+class SmartTrainer: public RandomTrainer {
+private:
+    map<int, int> m_char_stats; // Key: Character, Value: Number of mistakes
+
+public:
+    SmartTrainer(vector<string> &words);
+    string selectWords();
+    string selectWords(vector<string> &words);
+    string getWords();
+    bool ended();
+    int getMistakeCount(int ch);
+    void setMistakeCount(int ch, int count);
+};
+
 
 #endif
